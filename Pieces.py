@@ -16,8 +16,10 @@ class King(Piece):
         else:
             r = 0
         Piece.__init__(self, color, [r, 4])
+        self.value = 99
         self.symbol = pygame.image.load("Pieces/King{}.bmp".format(color))
         self.symbol.set_colorkey((255,0,255)) #Make pink transparent
+        self.hasMoved = False
     
     def getValidMoves(self, board): #Bruk denne før et flytt
         list = []
@@ -31,16 +33,35 @@ class King(Piece):
                             list.append([r,c])
                     else:
                         list.append([r,c])
+        
+        #Castling
+        #Right
+        r = board.searchDirection(self, [0, 1])[0]
+        if type(r) == Rook:
+            if (not self.hasMoved) and (not r.hasMoved):
+                list.append([self.pos[0], self.pos[1]+2])
+        #Left
+        l = board.searchDirection(self, [0, -1])[0]
+        if type(l) == Rook:
+            if (not self.hasMoved) and (not l.hasMoved):
+                list.append([self.pos[0], self.pos[1]-2])
+                
         return list
+
+    def move(self, finalPos):
+        Piece.move(self, finalPos)
+        self.hasMoved = True
+
         
 
 
 class Pawn(Piece):
     def __init__(self, color, position):
         Piece.__init__(self, color, position)
+        self.value = 1
         self.symbol = pygame.image.load("Pieces/Pawn{}.bmp".format(self.color))
         self.symbol.set_colorkey((255,0,255))
-        self.firstMove = True
+        self.aupassauAvail = False
         
     def getValidMoves(self, board):
         list = []
@@ -49,8 +70,7 @@ class Pawn(Piece):
             r_dir = 1
         else:
             r_dir = -1
-
-
+        
         nearest = board.searchDirection(self, [r_dir,0]) 
         nearestPiece = nearest[0]
         nearestPos = nearest[1]
@@ -60,7 +80,11 @@ class Pawn(Piece):
         c2 = nearestPos[1]
         if (abs(r2-r1) > 1): #If no piece is blocking, here there is a weird error, kan ikke flytte til enden av brettet, hvis ja, så kan han også slå ut forover
             list.append([self.pos[0]+r_dir, self.pos[1]])
-            if self.firstMove and (abs(r2-r1) > 2):
+            if (self.color == 'w' and self.pos[0] == 6) or (self.color == 'b' and self.pos[0] == 1):
+                firstMove = True
+            else:
+                firstMove = False            
+            if firstMove and (abs(r2-r1) > 2):
                 list.append([self.pos[0]+2*r_dir, self.pos[1]])
         if board.posOutOfBounds([r1 + 2*r_dir, c1]): #ad hoc dårlig løsning som resulterer i at du kan slå ut deg selv på enden, men du skal bli dronning læll
             list.append([r2,c2])
@@ -70,9 +94,30 @@ class Pawn(Piece):
         if not (board.posOutOfBounds([r1+r_dir,c1-1])) and board.pieces[r1+r_dir][c1-1] != None: #The other side
             if board.pieces[r1+r_dir][c1-1].color != self.color:
                 list.append([r1+r_dir,c1-1])
+        
+        #Aupassau
+        #Left
+        if not board.posOutOfBounds([r1, c1-1]):
+            p = board.pieces[r1][c1-1]
+            if p != None:
+                if type(p) == Pawn:
+                    if p.aupassauAvail:
+                        list.append([r1 + r_dir,c1-1])        
+        #Right
+        if not board.posOutOfBounds([r1, c1+1]):
+            p = board.pieces[r1][c1+1]
+            if p != None:
+                if type(p) == Pawn:
+                    if p.aupassauAvail:
+                        list.append([r1 + r_dir,c1+1])
+        
         return list
     
     def move(self, finalPos):
+        if (abs(finalPos[0] - self.pos[0]) > 1):
+            self.aupassauAvail = True
+        else:
+            self.aupassauAvail = False
         Piece.move(self, finalPos)
         self.firstMove = False
 
@@ -80,8 +125,10 @@ class Pawn(Piece):
 class Rook(Piece):
     def __init__(self, color, position):
         Piece.__init__(self, color, position)
+        self.value = 5
         self.symbol = pygame.image.load("Pieces/Rook{}.bmp".format(color))
-        self.symbol.set_colorkey((255,0,255)) #Make pink transparent
+        self.symbol.set_colorkey((255,0,255))
+        self.hasMoved = False
     
     def getValidMoves(self, board): #Bruk denne før et flytt
         list = []
@@ -116,14 +163,17 @@ class Rook(Piece):
             list.remove(i)        
         return list
 
+    def move(self, finalPos):
+        Piece.move(self, finalPos)
+        self.hasMoved = True
         
         
 class Knight(Piece):
     def __init__(self, color, position):
         Piece.__init__(self, color, position)
+        self.value = 3
         self.symbol = pygame.image.load("Pieces/Knight{}.bmp".format(self.color))
         self.symbol.set_colorkey((255,0,255))
-        self.firstMove = True
         
     def getValidMoves(self, board):
         list = []
@@ -155,21 +205,67 @@ class Knight(Piece):
 class Bishop(Piece):
     def __init__(self, color, position):
         Piece.__init__(self, color, position)
+        self.value = 3
         self.symbol = pygame.image.load("Pieces/Bishop{}.bmp".format(color))
         self.symbol.set_colorkey((255,0,255)) #Make pink transparent
     
     def getValidMoves(self, board): #Bruk denne før et flytt
         list = []
-        nearestRight =  board.searchDirection(self, [0, 1])
-        nearestLeft =   board.searchDirection(self, [0, -1])
-        nearestUp =     board.searchDirection(self, [-1, 0])
-        nearestDown =   board.searchDirection(self, [1, 0])
+        nearestUR =  board.searchDirection(self, [-1, 1])
+        nearestUL =   board.searchDirection(self, [-1, -1])
+        nearestDR =     board.searchDirection(self, [1, 1])
+        nearestDL =   board.searchDirection(self, [1, -1])
         
-        return list
-        
-        
-"""        
-class Queen(Piece):
-    def __init__(self):
+        nearestPieces = [nearestUR[0], nearestUL[0], nearestDR[0], nearestDL[0]]
+        nearestPoses = [nearestUR[1], nearestUL[1], nearestDR[1], nearestDL[1]]
 
-"""    
+        #Up right:
+        for r in range (nearestPoses[0][0], self.pos[0]+1):
+            c = self.pos[1] + (self.pos[0] - r)
+            list.append([r, c])
+        #Up left:
+        for r in range (nearestPoses[1][0], self.pos[0]+1):
+            c = self.pos[1] - (self.pos[0] - r)
+            list.append([r, c])        
+        #Down right:
+        for r in range (self.pos[0], nearestPoses[2][0]+1):
+            c = self.pos[1] + (r - self.pos[0])
+            list.append([r, c])
+        #Down left:
+        for r in range (self.pos[0], nearestPoses[3][0]+1):
+            c = self.pos[1] - (r - self.pos[0])
+            list.append([r, c])
+            
+        remove = []
+        for i in list:
+            p = board.pieces[i[0]][i[1]]
+            if p != None:
+                if p.color == self.color:
+                    remove.append(i)
+        for i in remove:
+            list.remove(i)        
+        return list
+
+
+        
+class Queen(Piece):
+    def __init__(self, color):
+        if color == 'w':
+            r = 7
+        else:
+            r = 0
+        Piece.__init__(self, color, [r, 3])
+        self.value = 10
+        self.symbol = pygame.image.load("Pieces/Queen{}.bmp".format(color))
+        self.symbol.set_colorkey((255,0,255))
+
+    def getValidMoves(self, board):
+        rookMoves = Rook(self.color, self.pos).getValidMoves(board)
+        bishopMoves = Bishop(self.color, self.pos).getValidMoves(board)
+        
+        list = rookMoves
+        for m in bishopMoves:
+            list.append(m)
+        return list
+
+    
