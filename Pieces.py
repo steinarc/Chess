@@ -48,6 +48,29 @@ class King(Piece):
                 
         return list
 
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        resetParameters = not self.hasMoved
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if resetParameters:
+                self.hasMoved = False
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
+        return list
+
     def move(self, finalPos):
         Piece.move(self, finalPos)
         self.hasMoved = True
