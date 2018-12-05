@@ -113,7 +113,7 @@ class Board:
         return [searchPiece, searchPos]
 
     def highlightValidMoves(self, piece, screen):
-        for pos in piece.getValidMoves(self):
+        for pos in piece.getValidMovesInclCheck(self):
             screen.blit(dot, (pos[1]*self.squareSize, pos[0]*self.squareSize))
 
     def movePiece(self, piece, initPos, finalPos):
@@ -179,6 +179,17 @@ class Board:
                 if p != None:
                     if p.color == color:
                         moveList = p.getValidMoves(self)
+                        for x in moveList:
+                            list.append(x)
+        return list
+    
+    def getAllMovesInclCheck(self, color):
+        list = []
+        for r in self.pieces:
+            for p in r:
+                if p != None:
+                    if p.color == color:
+                        moveList = p.getValidMovesInclCheck(self)
                         for x in moveList:
                             list.append(x)
         return list

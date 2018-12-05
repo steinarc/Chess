@@ -45,7 +45,7 @@ class King(Piece):
         if type(l) == Rook:
             if (not self.hasMoved) and (not l.hasMoved):
                 list.append([self.pos[0], self.pos[1]-2])
-                
+
         return list
 
     def getValidMovesInclCheck(self, board):
@@ -135,6 +135,26 @@ class Pawn(Piece):
                         list.append([r1 + r_dir,c1+1])
         
         return list
+
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
+        return list
     
     def move(self, finalPos):
         if (abs(finalPos[0] - self.pos[0]) > 1):
@@ -186,6 +206,26 @@ class Rook(Piece):
             list.remove(i)        
         return list
 
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
+        return list
+
     def move(self, finalPos):
         Piece.move(self, finalPos)
         self.hasMoved = True
@@ -223,6 +263,25 @@ class Knight(Piece):
             list.remove(i)        
         return list
         
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
+        return list
         
             
 class Bishop(Piece):
@@ -269,6 +328,25 @@ class Bishop(Piece):
             list.remove(i)        
         return list
 
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
+        return list
 
         
 class Queen(Piece):
@@ -289,6 +367,26 @@ class Queen(Piece):
         list = rookMoves
         for m in bishopMoves:
             list.append(m)
+        return list
+
+    def getValidMovesInclCheck(self, board):
+        list = self.getValidMoves(board)
+
+        #Remove moves that put you in check
+        remove = []
+        initPos = self.pos
+        for finalPos in list:
+            takenPiece = board.movePiece(self, initPos, finalPos)
+            if board.inCheck(self.color):
+                remove.append(finalPos)
+            board.movePiece(self, finalPos, initPos)
+            if takenPiece != None:
+                board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
+                #FIXME: Må fikses her
+            
+        for i in remove:
+            list.remove(i)
+            
         return list
 
     

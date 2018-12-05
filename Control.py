@@ -42,7 +42,7 @@ class Control:
             if not self.movingPiece.hasMoved:
                 resetParameters = True
 
-        if (finalPos in self.movingPiece.getValidMoves(board)):
+        if (finalPos in self.movingPiece.getValidMovesInclCheck(board)):
             #Before update, check if last mover is in check, if he is, then don't do the move and give a message
             takenPiece = board.movePiece(self.movingPiece, initPos, finalPos)
             if board.inCheck(self.turn):

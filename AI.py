@@ -10,11 +10,11 @@ class AI_Player:
     def moveRand(self, board, screen, control):
         pieces = board.getAllPieces(self.color)
         p = random.randint(0, len(pieces)-1)
-        while (len(pieces[p].getValidMoves(board)) == 0):
+        while (len(pieces[p].getValidMovesInclCheck(board)) == 0):
             p = random.randint(0, len(pieces)-1)
         piece = pieces[p]
-        m = random.randint(0, len(piece.getValidMoves(board))-1)
-        move = piece.getValidMoves(board)[m]
+        m = random.randint(0, len(piece.getValidMovesInclCheck(board))-1)
+        move = piece.getValidMovesInclCheck(board)[m]
         control.movingPiece = piece
         #time.sleep(0.1)
         control.movePiece(board = board, screen = screen, finalPos = move)
@@ -24,7 +24,7 @@ class AI_Player:
         for p in pieces:
             if p.color == self.color:
                 #Find if this piece has a move that captures
-                moves = p.getValidMoves(board)
+                moves = p.getValidMovesInclCheck(board)
                 for m in moves:
                     for r in board.pieces:
                         for p2 in r:
