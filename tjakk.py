@@ -17,10 +17,10 @@ if __name__ == "__main__":
     #control.drawButtons(screen, squareSize)
     
     twoPlayerMode = False
-    
+
     if not twoPlayerMode:
         ai = AI_Player('b')
-    
+
     while True:
         pygame.display.update()
         clock.tick(60)

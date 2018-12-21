@@ -27,8 +27,7 @@ class Control:
                         if (self.movingPiece != None):
                             self.moveMode = True
                             board.highlightValidMoves(self.movingPiece, screen)
-            #print("({}, {})".format(cord[0], cord[1]))
-            
+
         else:                   #Move highlighted piece
             self.performMove(board = board, pos = pos, screen = screen)
     
@@ -53,12 +52,6 @@ class Control:
             textsurface = myfont.render('Tjakk matt', False, (0, 155, 0))
             screen.blit(textsurface,(0,3*self.squareSize))
             
-        #If a button is pressed
-        """if self.resetButton.collidepoint(pos):
-            print("Reset button pressed")
-            board.draw(screen)
-        """
-
 
 
     #def drawButtons(self, screen, squareSize):

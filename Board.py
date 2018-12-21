@@ -151,11 +151,10 @@ class Board:
                 self.pieces[piece.pos[0]][3] = rook
                 self.pieces[piece.pos[0]][0] = None
         
-        else:
-            takenPiece = self.pieces[finalPos[0]][finalPos[1]]
-            self.pieces[finalPos[0]][finalPos[1]] = piece
-            self.pieces[initPos[0]][initPos[1]] = None
-            piece.move(finalPos)
+        takenPiece = self.pieces[finalPos[0]][finalPos[1]]
+        self.pieces[finalPos[0]][finalPos[1]] = piece
+        self.pieces[initPos[0]][initPos[1]] = None
+        piece.move(finalPos)
         
         #Promotion
         if type(piece) == Pawn and (piece.pos[0] == 0 or piece.pos[0] == 7):
@@ -164,7 +163,68 @@ class Board:
             q.move(finalPos)
         
         return takenPiece
-   
+    
+    #This function is performing a move and returning whether the move puts the given player in check
+    def testMove(self, piece, initPos, finalPos):
+        check = False
+        
+        #Drit i aupassau inntil videre
+        if type(piece) == Pawn and self.pieces[finalPos[0]][finalPos[1]] == None and initPos[1] != finalPos[1]:
+            if piece.color == 'w':
+                otherPiece = self.pieces[finalPos[0]+1][finalPos[1]]
+                if type(otherPiece) == Pawn:
+                    if otherPiece.aupassauAvail:
+                        self.pieces[finalPos[0]+1][finalPos[1]] = None
+                        
+                        piece.move(finalPos)
+                        self.pieces[finalPos[0]][finalPos[1]] = piece
+                        self.pieces[initPos[0]][initPos[1]] = None
+                        
+                        if self.inCheck(piece.color):
+                            check = True
+                        
+                        self.pieces[finalPos[0]+1][finalPos[1]] = otherPiece
+                        
+                        piece.move(initPos)
+                        self.pieces[initPos[0]][initPos[1]] = piece
+                        self.pieces[finalPos[0]][finalPos[1]] = None
+                        
+            else:
+                otherPiece = self.pieces[finalPos[0]-1][finalPos[1]]
+                if type(otherPiece) == Pawn:
+                    if otherPiece.aupassauAvail:
+                        self.pieces[finalPos[0]-1][finalPos[1]] = None
+                        
+                        piece.move(finalPos)
+                        self.pieces[finalPos[0]][finalPos[1]] = piece
+                        self.pieces[initPos[0]][initPos[1]] = None
+                        
+                        if self.inCheck(piece.color):
+                            check = True
+                        
+                        self.pieces[finalPos[0]-1][finalPos[1]] = otherPiece
+                        
+                        piece.move(initPos)        
+                        self.pieces[initPos[0]][initPos[1]] = piece
+                        self.pieces[finalPos[0]][finalPos[1]] = None
+
+        #Regular move. Jeg tror ikke rokkade trenger å behandles spesielt
+        else:
+            takenPiece = self.pieces[finalPos[0]][finalPos[1]]
+            piece.move(finalPos)
+            self.pieces[finalPos[0]][finalPos[1]] = piece
+            self.pieces[initPos[0]][initPos[1]] = None
+
+            if self.inCheck(piece.color):
+                check = True
+            
+            piece.move(initPos)
+            self.pieces[initPos[0]][initPos[1]] = piece
+            self.pieces[finalPos[0]][finalPos[1]] = takenPiece
+
+        return check
+    
+    
     def getAllPieces(self, color):
         list = []
         for r in self.pieces:
