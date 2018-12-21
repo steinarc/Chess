@@ -30,33 +30,20 @@ class Control:
             #print("({}, {})".format(cord[0], cord[1]))
             
         else:                   #Move highlighted piece
-            self.movePiece(board = board, pos = pos, screen = screen)
+            self.performMove(board = board, pos = pos, screen = screen)
     
-    def movePiece(self, board, screen, pos = None, finalPos = None):
+    def performMove(self, board, screen, pos = None, finalPos = None):
         self.moveMode = False
         if finalPos == None:
             finalPos = self.getCoord(board, pos)
         initPos = self.movingPiece.pos
-        resetParameters = False
-        if type(self.movingPiece) == King or type(self.movingPiece) == Rook:
-            if not self.movingPiece.hasMoved:
-                resetParameters = True
 
         if (finalPos in self.movingPiece.getValidMovesInclCheck(board)):
-            #Before update, check if last mover is in check, if he is, then don't do the move and give a message
-            takenPiece = board.movePiece(self.movingPiece, initPos, finalPos)
-            if board.inCheck(self.turn):
-                board.movePiece(self.movingPiece, finalPos, initPos)
-                if resetParameters:
-                    self.movingPiece.hasMoved = False
-                if takenPiece != None:
-                    board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
-                print("In check!")
+            board.movePiece(self.movingPiece, initPos, finalPos)
+            if (self.turn == 'w'):
+                self.turn = 'b'
             else:
-                if (self.turn == 'w'):
-                    self.turn = 'b'
-                else:
-                    self.turn = 'w'
+                self.turn = 'w'
         Animation.movePieceAnimation(board, screen, self.squareSize, self.movingPiece, initPos, finalPos)
         board.update(screen)
         self.movingPiece = None
@@ -74,6 +61,6 @@ class Control:
 
 
 
-    def drawButtons(self, screen, squareSize):
-        self.resetButton = pygame.Rect(squareSize, 8.5*squareSize, 2*squareSize, squareSize)
-        screen.fill((255,0,0), self.resetButton)
+    #def drawButtons(self, screen, squareSize):
+    #    self.resetButton = pygame.Rect(squareSize, 8.5*squareSize, 2*squareSize, squareSize)
+    #    screen.fill((255,0,0), self.resetButton)

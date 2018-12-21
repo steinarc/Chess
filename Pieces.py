@@ -56,7 +56,7 @@ class King(Piece):
         resetParameters = not self.hasMoved
         initPos = self.pos
         for finalPos in list:
-            takenPiece = board.movePiece(self, initPos, finalPos)
+            takenPiece = board.movePiece(self, initPos, finalPos) #Use testmove function
             if board.inCheck(self.color):
                 remove.append(finalPos)
             board.movePiece(self, finalPos, initPos)
@@ -68,7 +68,6 @@ class King(Piece):
             
         for i in remove:
             list.remove(i)
-            
         return list
 
     def move(self, finalPos):
@@ -123,14 +122,14 @@ class Pawn(Piece):
         if not board.posOutOfBounds([r1, c1-1]):
             p = board.pieces[r1][c1-1]
             if p != None:
-                if type(p) == Pawn:
+                if type(p) == Pawn and p.color != self.color:
                     if p.aupassauAvail:
                         list.append([r1 + r_dir,c1-1])        
         #Right
         if not board.posOutOfBounds([r1, c1+1]):
             p = board.pieces[r1][c1+1]
             if p != None:
-                if type(p) == Pawn:
+                if type(p) == Pawn and p.color != self.color:
                     if p.aupassauAvail:
                         list.append([r1 + r_dir,c1+1])
         
@@ -211,19 +210,21 @@ class Rook(Piece):
 
         #Remove moves that put you in check
         remove = []
+        resetParameters = not self.hasMoved
         initPos = self.pos
         for finalPos in list:
             takenPiece = board.movePiece(self, initPos, finalPos)
             if board.inCheck(self.color):
                 remove.append(finalPos)
             board.movePiece(self, finalPos, initPos)
+            if resetParameters:
+                self.hasMoved = False
             if takenPiece != None:
                 board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
                 #FIXME: Må fikses her
             
         for i in remove:
-            list.remove(i)
-            
+            list.remove(i)            
         return list
 
     def move(self, finalPos):

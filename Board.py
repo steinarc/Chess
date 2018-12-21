@@ -117,7 +117,7 @@ class Board:
             screen.blit(dot, (pos[1]*self.squareSize, pos[0]*self.squareSize))
 
     def movePiece(self, piece, initPos, finalPos):
-        #Aupassau
+        #Aupassau, there is a bug, you can't do aupassau anymore
         if type(piece) == Pawn and self.pieces[finalPos[0]][finalPos[1]] == None:
             if piece.color == 'w':
                 otherPiece = self.pieces[finalPos[0]+1][finalPos[1]]
@@ -139,28 +139,43 @@ class Board:
         if type(piece) == King and abs(finalPos[1] - initPos[1]) > 1:
             #Right
             if finalPos[1] - initPos[1] > 0:
+                ##
+                takenPiece = self.pieces[finalPos[0]][finalPos[1]]
+                self.pieces[finalPos[0]][finalPos[1]] = piece
+                self.pieces[initPos[0]][initPos[1]] = None
+                piece.move(finalPos)
+                ##
                 rook = self.pieces[piece.pos[0]][7]
                 rook.move([piece.pos[0],5])
                 self.pieces[piece.pos[0]][5] = rook
                 self.pieces[piece.pos[0]][7] = None
+                           
+
             #Left
-            else:
-                rook = self.pieces[piece.pos[0]][0]
-                rook.move([piece.pos[0],3])
-                self.pieces[piece.pos[0]][3] = rook
-                self.pieces[piece.pos[0]][0] = None
+#            else:
+#                rook = self.pieces[piece.pos[0]][0]
+#                rook.move([piece.pos[0],3])
+#                self.pieces[piece.pos[0]][3] = rook
+#                self.pieces[piece.pos[0]][0] = None
         
+        else:
+            takenPiece = self.pieces[finalPos[0]][finalPos[1]]
+            self.pieces[finalPos[0]][finalPos[1]] = piece
+            self.pieces[initPos[0]][initPos[1]] = None
+            piece.move(finalPos)
         
-        takenPiece = self.pieces[finalPos[0]][finalPos[1]]
-        self.pieces[finalPos[0]][finalPos[1]] = piece
-        self.pieces[initPos[0]][initPos[1]] = None
-        piece.move(finalPos)
-        
+        #Testing
+        if (type(piece) == King):
+            print("King pos")
+            print(type(piece))
+            print(piece.pos)
+
         #Promotion
         if type(piece) == Pawn and (piece.pos[0] == 0 or piece.pos[0] == 7):
             q = Queen(piece.color)
             self.pieces[finalPos[0]][finalPos[1]] = q
             q.move(finalPos)
+        
         return takenPiece
    
     def getAllPieces(self, color):
@@ -219,7 +234,7 @@ class Board:
                 for p in r:
                     if p != None:
                         if p.color == color:
-                            moves = p.getValidMoves(self)
+                            moves = p.getValidMovesInclCheck(self) #FIXME: getValidMovesInclCheck??
                             #Try all these moves and see if not inCheck()
                             for finalPos in moves:
                                 initPos = p.pos
@@ -238,6 +253,3 @@ class Board:
             return True
         else:
             return False
-
-        
-        

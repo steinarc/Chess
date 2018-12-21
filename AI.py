@@ -17,8 +17,8 @@ class AI_Player:
         move = piece.getValidMovesInclCheck(board)[m]
         control.movingPiece = piece
         #time.sleep(0.1)
-        control.movePiece(board = board, screen = screen, finalPos = move)
-    
+        control.performMove(board = board, screen = screen, finalPos = move)
+
     def moveRandPrioritizeCapture(self, board, screen, control):
         pieces = board.getAllPieces(self.color)
         for p in pieces:
@@ -31,7 +31,7 @@ class AI_Player:
                             if p2 != None:
                                 if p2.pos == m and p2.color != self.color:
                                     control.movingPiece = p
-                                    control.movePiece(board = board, screen = screen, finalPos = m)
+                                    control.performMove(board = board, screen = screen, finalPos = m)
                                     return
         self.moveRand(board, screen, control)
         
@@ -40,14 +40,14 @@ class AI_Player:
         for p in pieces:
             if p.color == self.color:
                 #Find if this piece has a move that captures
-                moves = p.getValidMoves(board)
+                moves = p.getValidMovesInclCheck(board)
                 for m in moves:
                     for r in board.pieces:
                         for p2 in r:
                             if p2 != None:
                                 if p2.pos == m and p2.color != self.color and p2.value >= p.value:
                                     control.movingPiece = p
-                                    control.movePiece(board = board, screen = screen, finalPos = m)
+                                    control.performMove(board = board, screen = screen, finalPos = m)
                                     return
         self.moveRand(board, screen, control)
         
