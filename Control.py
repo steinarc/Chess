@@ -53,7 +53,12 @@ class Control:
             textsurface = myfont.render('Tjakk matt', False, (0, 155, 0))
             screen.blit(textsurface,(0,3*self.squareSize))
             #time.sleep(1000)
-            
+        elif board.isStalemate(self.turn):
+            pygame.font.init()
+            myfont = pygame.font.SysFont('Comic Sans MS', 110)
+            textsurface = myfont.render('Pattebings', False, (0, 155, 0))
+            screen.blit(textsurface,(0,3*self.squareSize))
+            #time.sleep(1000) 
             
 
 

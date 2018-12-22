@@ -298,3 +298,10 @@ class Board:
             return True
         else:
             return False
+    
+    def isStalemate(self, color):
+        if len(self.getAllMovesInclCheck(color)) == 0:
+            return True
+        else:
+            return False
+            

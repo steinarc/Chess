@@ -25,8 +25,7 @@ def movePieceAnimation(board, screen, squareSize, piece, initPos, finalPos):
             x += x_step
             y += y_step
             if p == floor(res - res/10):
-                speed = speed / 4
-                res = 100
+                speed = speed / 10
             time.sleep(1/(speed*res))
 
 def resetBoardExceptPiece(piece, board, screen, squareSize):
