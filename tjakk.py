@@ -26,9 +26,11 @@ if __name__ == "__main__":
         clock.tick(60)
         
         if not twoPlayerMode and control.turn == ai.color:
-            ai.moveRand(board, screen, control)
+            #ai.moveRand(board, screen, control)
             #ai.moveRandPrioritizeCaptureUsingVal(board, screen, control)
-        
+            #ai.moveRandEvaluateIfCapturedOnNewPosUsingVal(board, screen, control)
+            ai.smartMove(board, screen, control)
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
@@ -37,7 +39,3 @@ if __name__ == "__main__":
                     control.mouseClick(board, event.pos, screen)
                     
     
-
-
-
-

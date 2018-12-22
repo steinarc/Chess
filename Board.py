@@ -2,7 +2,7 @@ import pygame
 from copy import deepcopy
 from Pieces import King , Pawn, Rook, Knight, Bishop, Queen
 
-white, black = (255, 255, 255), (0, 0, 0)
+white, black = (255, 255, 255), (90, 90, 90)
 
 dot = pygame.image.load("Pieces/klyse75x75.bmp")
 dot.set_colorkey((255,0,255))
@@ -167,8 +167,7 @@ class Board:
     #This function is performing a move and returning whether the move puts the given player in check
     def testMove(self, piece, initPos, finalPos):
         check = False
-        
-        #Drit i aupassau inntil videre
+        #Aupassau i begge retninger
         if type(piece) == Pawn and self.pieces[finalPos[0]][finalPos[1]] == None and initPos[1] != finalPos[1]:
             if piece.color == 'w':
                 otherPiece = self.pieces[finalPos[0]+1][finalPos[1]]
@@ -295,7 +294,6 @@ class Board:
                                     self.movePiece(p, finalPos, initPos)
                                     if takenPiece != None:
                                         self.pieces[finalPos[0]][finalPos[1]] = takenPiece
-
             print("Check Mate! {} has lost!".format(color))
             return True
         else:
