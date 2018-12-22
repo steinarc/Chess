@@ -134,7 +134,7 @@ class AI_Player:
             reward = takenPiece.value
         else:
             reward = 0
-        
+
         bestEnemyCaptureValue = 0
         enemyMoves = board.getAllMovesInclCheck(self.enemyColor)
         for move in enemyMoves:
@@ -146,10 +146,6 @@ class AI_Player:
         
         reward = reward - bestEnemyCaptureValue
         
-        #The old simple way
-        #if (move in board.getAllMovesInclCheck(self.enemyColor)):
-        #    reward = reward - piece.value
-
         board.movePiece(piece, piece.pos, initPos)
         if takenPiece != None:
             board.pieces[takenPiece.pos[0]][takenPiece.pos[1]] = takenPiece
